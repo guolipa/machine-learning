@@ -1,4 +1,5 @@
 #程序是基于电子邮件垃圾过滤的实例对朴素贝叶斯的实现
+
 import re
 import numpy as np
 
@@ -43,28 +44,42 @@ def spamTest():
     errorRate = float(errorCount) / len(testIndex)
     print("The error rate is:%f" % errorRate)
 
-#将整个文本组成的字符串按word分割成字符串列表
 def textParse(testString):
+    '''将整个文本组成的字符串按word分割成字符串列表
+    :param testString:
+    :return:
+    '''
     stringListOfText = re.split(r'\W*', testString)
     return [s.lower() for s in stringListOfText if len(s) > 2]
 
-#创建词汇表向量，里面包含出现在所有文本中的word
 def createVocabList(dataSet):
+    '''创建词汇表向量，里面包含出现在所有文本中的word
+    :param dataSet:
+    :return:
+    '''
     vocabList = set([])
     for text in dataSet:
         vocabList = vocabList | set(text)  # | 的作用是集合求并集或者按位求或(or)的操作
     return list(vocabList)
 
-#将一个文本的词向量转化成文档向量，向量每个元素为0或1，表示文本中的单词是否在词汇表中出现，eg[0,1,0,1,1,1]
 def setOfWords2Vec(vocabList, wordSet):
+    '''将一个文本的词向量转化成文档向量，向量每个元素为0或1，表示文本中的单词是否在词汇表中出现，eg[0,1,0,1,1,1]
+    :param vocabList:
+    :param wordSet:
+    :return:
+    '''
     resultVec = [0]*len(vocabList)
     for word in wordSet:
         if word in vocabList:
             resultVec[vocabList.index(word)] = 1
     return resultVec
 
-#朴素贝叶斯分类器的训练函数,以二分类为例
 def fit(trainSet,trainClass):
+    '''朴素贝叶斯分类器的训练函数,以二分类为例
+    :param trainSet:
+    :param trainClass:
+    :return:
+    '''
     numDocs = len(trainClass)
     numWords = len(trainSet[0])
     p1 = (sum(trainClass)+1) / (float(numDocs)+2)
@@ -84,6 +99,13 @@ def fit(trainSet,trainClass):
     return p0Vec, p1Vec, p1
 
 def predict(testVec, p0Vec, p1Vec, pClass1):
+    '''
+    :param testVec:
+    :param p0Vec:
+    :param p1Vec:
+    :param pClass1:
+    :return:
+    '''
     p1 = sum(testVec * p1Vec) + np.log(pClass1)
     p0 = sum(testVec * p0Vec) + np.log(1.0 - pClass1)
     if p0 > p1:
